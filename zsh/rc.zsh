@@ -1,5 +1,12 @@
-# Enable Starship
-eval "$(starship init zsh)"
+function source_if_exists() {
+  if [ -f $1 ]; then
+    source $1
+  fi
+}
+
+export DOTFILES=$HOME/repo/dotfiles
+
+source_if_exists $DOTFILES/zsh/alias.zsh
 
 # zsh plugins
 export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
@@ -19,3 +26,6 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Enable Starship
+eval "$(starship init zsh)"

@@ -4,12 +4,10 @@ function source_if_exists() {
   fi
 }
 
-export DOTFILES=$HOME/repo/dotfiles
-
+source_if_exists $HOME/.env.zsh
 source_if_exists $DOTFILES/zsh/alias.zsh
 
 # zsh plugins
-export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 source ${ZSH_CUSTOM}/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ${ZSH_CUSTOM}/plugins/zsh-completions/zsh-completions.plugin.zsh

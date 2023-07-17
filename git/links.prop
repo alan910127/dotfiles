@@ -1,1 +1,1 @@
-$DOTFILES/git/.gitconfig=~/.gitconfig
+$DOTFILES/git/.gitconfig=$HOME/.gitconfig

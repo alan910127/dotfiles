@@ -1,4 +1,8 @@
-#/bin/sh
+#!/usr/bin/env zsh
+
+DOTFILES=$(pwd -P)
+
+set -e
 
 # Install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -12,31 +16,32 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 # Create symlinks
-parse_link() {
-    local line=$1
-    local source=$(eval echo "$line" | cut -d'=' -f1)
-    local target=$(eval echo "$line" | cut -d'=' -f2)
+symlink() {
+    local src="$1"
+    local dest="$2"
 
-    if [ -f "$target" ]; then
-        echo "File $target already exists. Skipping..."
-    else
-        mkdir -p $(dirname "$target")
-        ln -s "$source" "$target"
+    if [ -e "$dest" ]; then
+        echo "File '$dest' already exists, skipping..."
+        return
     fi
+
+    echo "Linking: $dest -> $src"
+    mkdir -p "$(dirname "$dest")"
+    ln -s "$src" "$dest"
 }
 
-for file in $(find . -type f -name links.prop); do
-    cat "$file" | while read line || [ -n "$line" ]; do
-        source=$(eval echo "$line" | cut -d'=' -f1)
-        target=$(eval echo "$line" | cut -d'=' -f2)
+link_files() {
+    local src dest file
 
-        if [ -f "$target" ]; then
-            echo "File $target already exists. Skipping..."
-        else
-            mkdir -p $(dirname "$target")
-            ln -s "$source" "$target"
-        fi
+    for file in $(find . -type f -name links.prop); do
+        cat "$file" | while read line || [ -n "$line" ]; do
+            src=$(eval echo "$line" | cut -d '=' -f1)
+            dest=$(eval echo "$line" | cut -d '=' -f2)
+            symlink "$src" "$dest"
+        done
     done
-done
+}
+
+link_files
 
 source ~/.zshrc

@@ -8,7 +8,7 @@ This collection contains my personalized configuration files tailored for variou
 To begin using these dotfiles, clone this repository to your preferred location:
 
 ```bash
-git clone https://github.com/alan910127/.dotfiles.git ~/.dotfiles
+git clone https://github.com/alan910127/dotfiles.git ~/.dotfiles
 ```
 
 After cloning, navigate into the dotfiles directory:

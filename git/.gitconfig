@@ -1,0 +1,7 @@
+[init]
+    defaultBranch = main
+[user]
+    email = 70696274+alan910127@users.noreply.github.com
+    name = alan910127
+[core]
+    editor = nvim

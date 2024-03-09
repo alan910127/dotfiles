@@ -29,3 +29,8 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # go
 export PATH="/usr/local/go/bin:$PATH"
+
+export PATH="$HOME/.local/scripts:$PATH"
+
+# See bin/.local/scripts/tmux-sessionizer
+bindkey -s "^f" "tmux-sessionizer\n"

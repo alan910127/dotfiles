@@ -1,0 +1,44 @@
+#!/usr/bin/env zsh
+
+has_session() {
+	return $(tmux has-session -t "$1")
+}
+
+attach_session() {
+	local session_name="$1"
+	local tmux_running=$(pgrep tmux)
+
+	if [ -z "$TMUX" ] || [ -z "$tmux_running" ]; then
+		tmux attach-session -t "$session_name"
+	fi
+
+	tmux switch-client -t "$session_name"
+}
+
+if [ "$#" -gt 0 ]; then
+	local session_name="$1"
+
+	if ! has_session "$session_name"; then
+		echo "WHERE DID YOU WANT TO GO??"
+		exit 1
+	fi
+
+	attach_session "$session_name"
+	exit
+fi
+
+selected_dir=$(zoxide query --list | fzf --reverse)
+session_name=$(basename "$selected_dir" | tr . _)
+
+if [ -z "$session_name" ]; then 
+	echo "Canceled."
+	exit
+fi
+
+if ! has_session "$session_name"; then
+	tmux new-session -c "$selected_dir" -s "$session_name" -d
+fi
+
+attach_session "$session_name"
+
+# vim: ft=sh ts=4 sw=4

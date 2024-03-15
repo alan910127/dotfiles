@@ -37,6 +37,7 @@ return {
         ["<C-Space>"] = cmp.mapping.complete({}),
       }),
       sources = {
+        { name = "copilot" },
         { name = "nvim_lsp" },
         { name = "luasnip" },
         { name = "path" },

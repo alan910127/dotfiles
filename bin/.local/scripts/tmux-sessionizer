@@ -35,6 +35,9 @@ if [ -z "$session_name" ]; then
 	exit
 fi
 
+# increase the rank of the selected directory in zoxide
+zoxide add "$selected_dir"
+
 if ! has_session "$session_name"; then
 	tmux new-session -c "$selected_dir" -s "$session_name" -d
 fi

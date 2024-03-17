@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 has_session() {
-	return $(tmux has-session -t "$1")
+	return $(tmux has-session -t "$1" 2> /dev/null)
 }
 
 attach_session() {

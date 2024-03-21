@@ -1,4 +1,8 @@
-[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh" ] && source "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh"
+function source_if_exists() {
+  [ -f "$1" ] && source "$1"
+}
+
+source_if_exists "${xdg_data_home:-$home/.local/share}/zap/zap.zsh"
 plug "zap-zsh/supercharge"
 plug "zsh-users/zsh-autosuggestions"
 plug "zsh-users/zsh-syntax-highlighting"
@@ -34,3 +38,5 @@ export PATH="$HOME/.local/scripts:$PATH"
 
 # See bin/.local/scripts/tmux-sessionizer
 bindkey -s "^f" "tmux-sessionizer\n"
+
+source_if_exists "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.zsh"

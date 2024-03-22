@@ -64,7 +64,14 @@ return {
 
       local servers = {
         rust_analyzer = {},
-        pyright = {},
+        pyright = {
+          python = {
+            analysis = {
+              autoImportCompletions = true,
+              typeCheckingMode = "basic",
+            },
+          },
+        },
         ruff_lsp = {},
 
         -- Configuration file formats

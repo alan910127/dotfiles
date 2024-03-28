@@ -2,13 +2,7 @@ return {
   {
     "lewis6991/gitsigns.nvim",
     opts = {
-      signs = {
-        add = { text = "+" },
-        change = { text = "~" },
-        delete = { text = "_" },
-        topdelete = { text = "‾" },
-        changedelete = { text = "~" },
-      },
+      attach_to_untracked = true,
       current_line_blame = true,
       ---@param buffer integer
       on_attach = function(buffer)

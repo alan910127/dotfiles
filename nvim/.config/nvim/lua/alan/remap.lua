@@ -1,4 +1,4 @@
-vim.keymap.set("n", "<leader>fe", ":Ex<CR>", { desc = "[F]ile [E]xplorer" })
+vim.keymap.set("n", "-", ":Ex<CR>", { desc = "File Explorer" })
 
 -- Move lines up and down
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")

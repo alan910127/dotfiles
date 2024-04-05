@@ -1,47 +1,70 @@
 #!/usr/bin/env zsh
 
+session_name() {
+    echo $(basename "$1" | tr . _)
+}
+
 has_session() {
-	return $(tmux has-session -t "$1" 2> /dev/null)
+    return tmux has-session -t "$1" 2>/dev/null
 }
 
 attach_session() {
-	local session_name="$1"
-	local tmux_running=$(pgrep tmux)
+    local session_name="$1"
+    local tmux_running=$(pgrep tmux)
 
-	if [ -z "$TMUX" ] || [ -z "$tmux_running" ]; then
-		tmux attach-session -t "$session_name"
-	fi
+    if [ -z "$TMUX" ] || [ -z "$tmux_running" ]; then
+        tmux attach-session -t "$session_name"
+    fi
 
-	tmux switch-client -t "$session_name"
+    tmux switch-client -t "$session_name"
 }
 
-if [ "$#" -gt 0 ]; then
-	local session_name="$1"
+new_session() {
+    local selected_dir="$1"
 
-	if ! has_session "$session_name"; then
-		echo "WHERE DID YOU WANT TO GO??"
-		exit 1
-	fi
+    tmux new-session -c "$selected_dir" -s "$(session_name $selected_dir)" -d
+}
 
-	attach_session "$session_name"
-	exit
-fi
+main() {
+    if [ "$#" -gt 0 ]; then
+        local dir_or_name="$1"
 
-selected_dir=$(zoxide query --list | fzf --reverse)
-session_name=$(basename "$selected_dir" | tr . _)
+        if ! has_session "$dir_or_name"; then
+            if [ ! -d "$dir_or_name" ]; then
+                echo "You know what? I'm not gonna do that."
+                exit 1
+            fi
+            # it's a directory
+            dir_or_name=$(realpath "$dir_or_name")
+            new_session "$dir_or_name"
 
-if [ -z "$session_name" ]; then 
-	echo "Canceled."
-	exit
-fi
+            # set dir_or_name to the session name for the attacing part
+            dir_or_name=$(session_name "$dir_or_name")
+        fi
 
-# increase the rank of the selected directory in zoxide
-zoxide add "$selected_dir"
+        # it's must be a session name
+        attach_session "$dir_or_name"
+        exit
+    fi
 
-if ! has_session "$session_name"; then
-	tmux new-session -c "$selected_dir" -s "$session_name" -d
-fi
+    selected_dir=$(zoxide query --list | fzf --reverse)
+    session_name=$(session_name "$selected_dir")
 
-attach_session "$session_name"
+    if [ -z "$session_name" ]; then
+        echo "Canceled."
+        exit
+    fi
 
-# vim: ft=sh ts=4 sw=4
+    # increase the rank of the selected directory in zoxide
+    zoxide add "$selected_dir"
+
+    if ! has_session "$session_name"; then
+        new_session "$selected_dir"
+    fi
+
+    attach_session "$session_name"
+}
+
+main "$@"
+
+# vim: ft=sh

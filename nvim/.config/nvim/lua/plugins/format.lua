@@ -15,6 +15,12 @@ return {
         lua = { "stylua" },
         python = { "ruff_format", "ruff_fix" },
         markdown = { "prettier" },
+        sh = { "shfmt" },
+      },
+      formatters = {
+        shfmt = {
+          prepend_args = { "-i", "4" },
+        },
       },
     },
   },

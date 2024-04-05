@@ -47,6 +47,7 @@ local language_servers = {
 
 local ensure_installed = vim.list_extend(vim.tbl_keys(language_servers), {
   "stylua",
+  "shfmt",
 })
 
 -- Highlight references of the word under the cursor when the cursor stays at

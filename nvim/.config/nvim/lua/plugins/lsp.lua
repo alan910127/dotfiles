@@ -1,55 +1,3 @@
----@class LanguageServerConfig
----@field root_dir? fun(filename: string, bufnr: integer): string|nil
----@field name? string
----@field filetypes? string[]
----@field autostart? boolean
----@field single_file_support? boolean
----@field on_new_config? fun(config: LanguageServerConfig, new_root_dir: string): nil
----@field capabilities? table<string, string|table|boolean|function>
----@field cmd? string[]
----@field handlers? table<string, lsp-handler>
----@field init_options? table<string, string|table|boolean>
----@field on_attach? fun(client: table, bufnr: integer): nil
----@field settings? table<string, string|table|boolean>
-
----@type table<string, LanguageServerConfig>
-local language_servers = {
-  rust_analyzer = {},
-  basedpyright = {},
-  ruff_lsp = {},
-  clangd = {
-    cmd = { "clangd", "--offset-encoding=utf-16" },
-  },
-
-  -- Configuration file formats
-  jsonls = {},
-  yamlls = {},
-  taplo = {}, -- TOML
-
-  lua_ls = {
-    settings = {
-      Lua = {
-        runtime = { version = "LuaJIT" },
-        workspace = {
-          checkThirdParty = false,
-          library = {
-            "${3rd}/luv/library",
-            unpack(vim.api.nvim_get_runtime_file("", true)),
-          },
-        },
-        completion = {
-          callSnippet = "Replace",
-        },
-      },
-    },
-  },
-}
-
-local ensure_installed = vim.list_extend(vim.tbl_keys(language_servers), {
-  "stylua",
-  "shfmt",
-})
-
 -- Highlight references of the word under the cursor when the cursor stays at
 -- the same location for a certain amount of time.
 --
@@ -114,12 +62,24 @@ return {
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
+    local lsp_config_path = vim.fn.stdpath("config") .. "/lua/alan/lsp"
+    ---@type string[]
+    local lsp_configs = vim.fn.readdir(lsp_config_path, [[v:val =~ "\.lua$"]])
+    local servers = {}
+
+    for _, file in ipairs(lsp_configs) do
+      local name = file:gsub("%.lua$", "")
+      local settings = require("alan.lsp." .. name)
+
+      servers[name] = settings
+    end
+
     require("mason").setup()
-    require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+    require("mason-tool-installer").setup({ ensure_installed = vim.tbl_keys(servers) })
     require("mason-lspconfig").setup({
       handlers = {
         function(server_name)
-          local server = language_servers[server_name] or {}
+          local server = servers[server_name] or {}
 
           server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
           require("lspconfig")[server_name].setup(server)

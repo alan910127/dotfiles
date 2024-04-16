@@ -21,6 +21,25 @@ local function highlight_cursor_on_idle(client, buffer)
   })
 end
 
+---@param client lsp.Client
+---@param buffer integer
+---@param kind string
+local function code_action_on_save(client, buffer, kind)
+  if not client or not client.server_capabilities.codeActionProvider then
+    return
+  end
+
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    buffer = buffer,
+    callback = function()
+      vim.lsp.buf.code_action({
+        context = { only = { kind } },
+        apply = true,
+      })
+    end,
+  })
+end
+
 return {
   "neovim/nvim-lspconfig",
   dependencies = {
@@ -56,6 +75,7 @@ return {
 
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         highlight_cursor_on_idle(client, event.buf)
+        code_action_on_save(client, event.buf, "source.fixAll")
       end,
     })
 

@@ -82,17 +82,7 @@ return {
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-    local lsp_config_path = vim.fn.stdpath("config") .. "/lua/alan/lsp"
-    ---@type string[]
-    local lsp_configs = vim.fn.readdir(lsp_config_path, [[v:val =~ "\.lua$"]])
-    local servers = {}
-
-    for _, file in ipairs(lsp_configs) do
-      local name = file:gsub("%.lua$", "")
-      local settings = require("alan.lsp." .. name)
-
-      servers[name] = settings
-    end
+    local servers = require("alan.config.lsp")
 
     require("mason").setup()
     require("mason-tool-installer").setup({ ensure_installed = vim.tbl_keys(servers) })

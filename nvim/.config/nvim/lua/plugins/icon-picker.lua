@@ -13,6 +13,6 @@ return {
 
     map("n", "<leader><leader>i", "<CMD>IconPickerNormal<CR>", "[I]con Picker")
     map("n", "<leader><leader>y", "<CMD>IconPickerYank<CR>", "Icon Picker [Y]ank Selected")
-    map("n", "<C-i>", "<CMD>IconPickerInsert<CR>", "[I]con Picker")
+    map("i", "<C-i>", "<CMD>IconPickerInsert<CR>", "[I]con Picker")
   end,
 }

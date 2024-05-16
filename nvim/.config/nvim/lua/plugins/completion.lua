@@ -62,6 +62,22 @@ return {
           { name = "path" },
         },
       })
+
+      for _, ftpath in ipairs(vim.api.nvim_get_runtime_file("lua/alan/snippets/*.lua", true)) do
+        loadfile(ftpath)()
+      end
+
+      vim.keymap.set({ "i", "s" }, "<C-l>", function()
+        if luasnip.expand_or_locally_jumpable() then
+          luasnip.expand_or_jump()
+        end
+      end, { silent = true })
+
+      vim.keymap.set({ "i", "s" }, "<C-h>", function()
+        if luasnip.locally_jumpable(-1) then
+          luasnip.jump(-1)
+        end
+      end, { silent = true })
     end,
   },
 }

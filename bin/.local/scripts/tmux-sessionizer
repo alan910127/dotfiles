@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
 
-sesh connect $(sesh list | fzf --reverse)
+sesh connect "$(sesh-list-fzf)"
 
 # vim: ft=sh

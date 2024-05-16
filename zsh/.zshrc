@@ -6,6 +6,7 @@ source_if_exists "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh"
 plug "zap-zsh/supercharge"
 plug "zsh-users/zsh-autosuggestions"
 plug "zsh-users/zsh-syntax-highlighting"
+plug "zsh-users/zsh-completions"
 plug "chivalryq/git-alias"
 plug "MichaelAquilina/zsh-you-should-use"
 
@@ -29,3 +30,5 @@ export NVM_DIR="$HOME/.nvm"
 bindkey -s "^f" "tmux-sessionizer\n"
 
 source_if_exists "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.zsh"
+
+autoload -U compinit && compinit

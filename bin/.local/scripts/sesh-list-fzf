@@ -5,13 +5,15 @@ fzf_cmd=${1:-fzf}
 if [ "$fzf_cmd" = "fzf-tmux" ]; then
     size_opt="-p"
     size_val="55%,60%"
+    border=""
 else
     size_opt="--height"
     size_val="55%"
+    border="--border"
 fi
 
 sesh list | "$fzf_cmd" "$size_opt" "$size_val" \
-    --no-sort --border --border-label ' sesh ' --prompt '⚡  ' \
+    --no-sort $border --border-label ' sesh ' --prompt '⚡  ' \
     --header '  ^a all ^t tmux ^g configs ^x zoxide ^d tmux kill ^f find' \
     --bind 'tab:down,btab:up' \
     --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list)' \

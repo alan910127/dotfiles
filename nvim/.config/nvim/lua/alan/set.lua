@@ -60,3 +60,21 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     vim.highlight.on_yank()
   end,
 })
+
+---@param fn fun():nil
+local function wsl_only(fn)
+  if vim.env.WSL_INTEROP ~= nil or vim.env.WSL_DISTRO_NAME ~= nil then
+    fn()
+  end
+end
+
+wsl_only(function()
+  local copy = "clip.exe"
+  local paste = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))'
+  vim.g.clipboard = {
+    name = "WslClipboard",
+    copy = { ["+"] = copy, ["*"] = copy },
+    paste = { ["+"] = paste, ["*"] = paste },
+    cache_enabled = false,
+  }
+end)

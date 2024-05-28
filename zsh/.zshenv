@@ -23,7 +23,7 @@ export PNPM_HOME=$HOME/.local/share/pnpm
 add_to_path_front $PNPM_HOME
 
 add_to_path_front $HOME/.zig
-add_to_path_front /usr/local/go/bin
+add_to_path_front $HOME/go/bin
 
 function __wezterm_set_user_var() {
     if ! command -v base64 &> /dev/null; then

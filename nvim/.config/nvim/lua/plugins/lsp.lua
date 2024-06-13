@@ -21,7 +21,7 @@ local function highlight_cursor_on_idle(client, buffer)
   })
 end
 
----@param client lsp.Client
+---@param client vim.lsp.Client|nil
 ---@param buffer integer
 ---@param kind string
 local function code_action_on_save(client, buffer, kind)
@@ -33,9 +33,10 @@ local function code_action_on_save(client, buffer, kind)
     buffer = buffer,
     callback = function()
       vim.lsp.buf.code_action({
-        context = { only = { kind } },
+        context = { only = { kind }, diagnostics = {} },
         apply = true,
       })
+      vim.wait(100)
     end,
   })
 end

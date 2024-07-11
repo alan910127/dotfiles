@@ -17,8 +17,8 @@ return {
     end
 
     map("<leader>a", function()
-      harpoon:list():append()
-    end, "[A]ppend")
+      harpoon:list():add()
+    end, "[A]dd")
     map("<C-e>", function()
       harpoon.ui:toggle_quick_menu(harpoon:list())
     end, "Quick [E]dit")

@@ -35,5 +35,7 @@ For an enhanced experience with these configurations, ensure you have the follow
 - [junegunn/fzf](https://github.com/junegunn/fzf)
 - [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep)
 - [ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide)
+- [sharkdp/fd](https://github.com/sharkdp/fd)
+- [eza-community/eza](https://github.com/eza-community/eza)
 
 These dependencies complement the functionality of the configured tools and contribute to a smoother workflow.

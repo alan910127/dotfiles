@@ -28,6 +28,7 @@ zinit snippet OMZP::git
 zinit snippet OMZP::sudo
 
 # Load completions
+fpath+=("$HOME/.zfunc")
 autoload -U compinit && compinit 2> /dev/null
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.

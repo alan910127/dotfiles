@@ -32,6 +32,8 @@ M.typescript = {
   tsserver = {},
   biome = {},
   prettier = {},
+  eslint = {},
+  tailwindcss = {},
 }
 
 M.lua = {

@@ -64,6 +64,8 @@ zstyle ":completion:*" menu no
 zstyle ":fzf-tab:complete:cd:*" fzf-preview "ls --color $realpath"
 
 alias ls="ls --color"
+alias lg="lazygit"
+alias lzd="lazydocker"
 
 function take() {
   mkdir -p "$@" && cd "${@:$#}"

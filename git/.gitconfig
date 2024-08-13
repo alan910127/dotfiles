@@ -5,3 +5,15 @@
     name = alan910127
 [core]
     editor = nvim
+    pager = delta
+[interactive]
+    diffFilter = delta --color-only
+[include]
+    path = ~/.dotfiles/delta/catppuccin.gitconfig
+[delta]
+    navigate = true
+    features = catppuccin-mocha
+[merge]
+    conflictstyle = diff3
+[diff]
+    colorMoved = default

@@ -1,3 +1,5 @@
+local wsl_only = require("utils.wsl").wsl_only
+
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
@@ -48,25 +50,8 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
--- Set highlight on search, but clear on pressing <Esc> in normal mode.
---   It's more akin to a setting, so the remap is placed here :(
+-- Set highlight on search.
 vim.opt.hlsearch = true
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
-
-vim.api.nvim_create_autocmd("TextYankPost", {
-  desc = "Highlight when yanking text",
-  group = vim.api.nvim_create_augroup("YankHighlight", { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-})
-
----@param fn fun():nil
-local function wsl_only(fn)
-  if vim.env.WSL_INTEROP ~= nil or vim.env.WSL_DISTRO_NAME ~= nil then
-    fn()
-  end
-end
 
 wsl_only(function()
   local copy = "clip.exe"

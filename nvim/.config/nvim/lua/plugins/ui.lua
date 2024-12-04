@@ -27,6 +27,27 @@ return {
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = {},
+    opts = function()
+      local devicons = require("nvim-web-devicons")
+      local function get_recording()
+        local reg = vim.fn.reg_recording()
+        if reg == "" then
+          return ""
+        end
+        return "Recording @" .. reg
+      end
+
+      return {
+        sections = {
+          lualine_c = {
+            "filename",
+            { get_recording, icon = devicons.get_icon("filetype", "cast") },
+          },
+          -- Remove progress & location
+          lualine_y = {},
+          lualine_z = {},
+        },
+      }
+    end,
   },
 }

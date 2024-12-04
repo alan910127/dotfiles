@@ -15,6 +15,7 @@ vim.api.nvim_create_autocmd("FileType", {
     "help",
     "lspinfo",
     "notify",
+    "grug-far",
   },
   callback = function(event)
     vim.bo[event.buf].buflisted = false

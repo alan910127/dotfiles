@@ -8,12 +8,15 @@ return {
     opts_extend = { "ensure_installed" },
     ---@module "nvim-treesitter"
     ---@type TSConfig
+    ---@diagnostic disable-next-line: missing-fields
     opts = {
       highlight = { enable = true },
       indent = { enable = true },
       ensure_installed = {
         "lua",
       },
+      sync_install = false,
+      auto_install = true,
     },
     ---@module "nvim-treesitter"
     ---@param opts TSConfig

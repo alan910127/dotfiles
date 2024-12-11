@@ -25,8 +25,13 @@ return {
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("alan_lsp_attach", { clear = true }),
         callback = function()
-          local function map(keys, func, desc)
-            vim.keymap.set("n", keys, func, { desc = "LSP: " .. desc })
+          ---@param keys string
+          ---@param func fun():nil
+          ---@param desc string
+          ---@param mode? string|string[]
+          local function map(keys, func, desc, mode)
+            mode = mode or "n"
+            vim.keymap.set(mode, keys, func, { desc = "LSP: " .. desc })
           end
 
           local telescope = require("telescope.builtin")
@@ -43,6 +48,7 @@ return {
           map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
           map("<leader>cA", lsp_util.action.source, "Source Code Action")
           map("K", vim.lsp.buf.hover, "Hover Documentation")
+          map("<C-h>", vim.lsp.buf.signature_help, "Show Signature Information", { "n", "i" })
           map("gD", vim.lsp.buf.declaration, "Goto Declaration")
 
           map("<leader>e", vim.diagnostic.open_float, "Open Error Pane")

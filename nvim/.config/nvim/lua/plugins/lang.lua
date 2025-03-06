@@ -7,4 +7,6 @@ return {
   -- { import = "plugins.extras.lang.gleam" },
 
   { import = "plugins.extras.lang.markdown" },
+  { import = "plugins.extras.lang.json" },
+  { import = "plugins.extras.lang.yaml" },
 }

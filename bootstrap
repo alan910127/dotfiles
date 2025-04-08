@@ -2,12 +2,12 @@
 
 pkgs=(
     bat
-    delta
     eza
     fd
     fzf
     git
     git
+    git-delta
     neovim
     ripgrep
     stow
@@ -50,15 +50,14 @@ check_os() {
 }
 
 install() {
-    info "Installing '$1'"
+    info "Installing packages ($(echo $@))"
     if [ "$dry_run" = "1" ]; then
         return
     fi
 
-    info "test"
     case "$(echo $ID | awk '{ print tolower($0) }')" in
-        "arch") sudo pacman -S "$1" ;;
-        "ubuntu") sudo apt install "$1" ;;
+        "arch") sudo pacman -S "$@" ;;
+        "ubuntu") sudo apt install "$@" ;;
     esac
 }
 
@@ -71,9 +70,7 @@ main() {
 
     check_os
 
-    for pkg in "${pkgs[@]}"; do
-        install "$pkg"
-    done
+    install "${pkgs[@]}"
 
     info "Cloning repository to '$DOTFILES'"
     if ! [ "$dry_run" = "1" ]; then
@@ -82,7 +79,9 @@ main() {
 
     info "Stowing '$DOTFILES/home' to '$HOME'"
     if ! [ "$dry_run" = "1" ]; then
-        stow -t "$HOME" "$DOTFILES/home"
+        pushd "$DOTFILES" > /dev/null
+        stow -v -t "$HOME" home/
+        popd > /dev/null
     fi
 
     info "Setting up tmux plugin manager"

@@ -1,101 +1,131 @@
--- Highlight references of the word under the cursor when the cursor stays at
--- the same location for a certain amount of time.
---
--- When the cursor is moved, the highlights will be cleared.
---
----@param client table|nil
----@param buffer integer
-local function highlight_cursor_on_idle(client, buffer)
-  if not client or not client.server_capabilities.documentHighlightProvider then
-    return
-  end
-
-  vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-    buffer = buffer,
-    callback = vim.lsp.buf.document_highlight,
-  })
-
-  vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-    buffer = buffer,
-    callback = vim.lsp.buf.clear_references,
-  })
-end
-
----@param client vim.lsp.Client|nil
----@param buffer integer
----@param kind string
-local function code_action_on_save(client, buffer, kind)
-  if not client or not client.server_capabilities.codeActionProvider then
-    return
-  end
-
-  vim.api.nvim_create_autocmd("BufWritePre", {
-    buffer = buffer,
-    callback = function()
-      vim.lsp.buf.code_action({
-        context = { only = { kind }, diagnostics = {} },
-        apply = true,
-      })
-      vim.wait(100)
-    end,
-  })
-end
-
 return {
-  "neovim/nvim-lspconfig",
-  dependencies = {
-    "williamboman/mason.nvim",
-    "williamboman/mason-lspconfig.nvim",
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
+  {
+    "neovim/nvim-lspconfig",
+    event = { "BufReadPost", "BufWritePost", "BufNewFile" },
+    dependencies = {
+      "mason.nvim",
+      { "williamboman/mason-lspconfig.nvim", config = function() end },
+      { "j-hui/fidget.nvim", opts = {} },
+    },
+    opts = {
+      servers = {
+        lua_ls = {
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = "Replace",
+              },
+            },
+          },
+        },
+      },
+      setup = {},
+    },
+    config = function(_, opts)
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("alan_lsp_attach", { clear = true }),
+        callback = function()
+          ---@param keys string
+          ---@param func fun():nil
+          ---@param desc string
+          ---@param mode? string|string[]
+          local function map(keys, func, desc, mode)
+            mode = mode or "n"
+            vim.keymap.set(mode, keys, func, { desc = "LSP: " .. desc })
+          end
 
-    { "j-hui/fidget.nvim", opts = {} },
-  },
-  config = function()
-    vim.api.nvim_create_autocmd("LspAttach", {
-      group = vim.api.nvim_create_augroup("alan-lsp-attach", { clear = true }),
-      callback = function(event)
-        ---@param keys string
-        ---@param func function
-        ---@param desc string
-        local map = function(keys, func, desc)
-          vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+          local telescope = require("telescope.builtin")
+          map("gd", telescope.lsp_definitions, "Goto Definition")
+          map("gr", telescope.lsp_references, "Goto References")
+          map("gI", telescope.lsp_implementations, "Goto Implementations")
+          map("<leader>D", telescope.lsp_type_definitions, "Type Definitions")
+          map("<leader>ds", telescope.lsp_document_symbols, "Document Symbols")
+          map("<leader>ws", telescope.lsp_workspace_symbols, "Workspace Symbols")
+
+          local lsp_util = require("utils.lsp")
+
+          map("<leader>rn", vim.lsp.buf.rename, "Rename")
+          map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
+          map("<leader>cA", lsp_util.action.source, "Source Code Action")
+          map("K", vim.lsp.buf.hover, "Hover Documentation")
+          map("<C-h>", vim.lsp.buf.signature_help, "Show Signature Information", { "n", "i" })
+          map("gD", vim.lsp.buf.declaration, "Goto Declaration")
+
+          map("<leader>e", vim.diagnostic.open_float, "Open Error Pane")
+        end,
+      })
+
+      local servers = opts.servers
+      local has_cmp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+      local capabilities = vim.tbl_deep_extend(
+        "force",
+        {},
+        vim.lsp.protocol.make_client_capabilities(),
+        has_cmp and cmp_nvim_lsp.default_capabilities() or {},
+        opts.capabilities or {}
+      )
+
+      local function setup(server)
+        local server_opts = vim.tbl_deep_extend("force", {
+          capabitilies = vim.deepcopy(capabilities),
+        }, servers[server] or {})
+        if server_opts.enabled == false then
+          return
         end
 
-        local builtin = require("telescope.builtin")
-        map("gd", builtin.lsp_definitions, "[G]oto [D]efinition")
-        map("gr", builtin.lsp_references, "[G]oto [R]eferences")
-        map("gI", builtin.lsp_implementations, "[G]oto [I]mplementation")
-        map("<leader>D", builtin.lsp_type_definitions, "Type [D]efinition")
-        map("<leader>ds", builtin.lsp_document_symbols, "[D]ocument [S]ymbols")
-        map("<leader>ws", builtin.lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+        if opts.setup[server] then
+          if opts.setup[server](server, server_opts) then
+            return
+          end
+        elseif opts.setup["*"] then
+          if opts.setup["*"](server, server_opts) then
+            return
+          end
+        end
+        require("lspconfig")[server].setup(server_opts)
+      end
 
-        map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-        map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-        map("K", vim.lsp.buf.hover, "Hover Documentation")
-        map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+      local have_mason, mlsp = pcall(require, "mason-lspconfig")
+      local all_mlsp_servers = {}
+      if have_mason then
+        all_mlsp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
+      end
 
-        local client = vim.lsp.get_client_by_id(event.data.client_id)
-        highlight_cursor_on_idle(client, event.buf)
-        code_action_on_save(client, event.buf, "source.fixAll")
-      end,
-    })
+      local ensure_installed = {}
+      for server, server_opts in pairs(servers) do
+        if server_opts then
+          server_opts = server_opts == true and {} or server_opts
+          if server_opts.enabled ~= false then
+            if server_opts.mason == false or not vim.tbl_contains(all_mlsp_servers, server) then
+              setup(server)
+            else
+              ensure_installed[#ensure_installed + 1] = server
+            end
+          end
+        end
+      end
 
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+      if have_mason then
+        mlsp.setup({ ensure_installed = ensure_installed, handlers = { setup } })
+      end
+    end,
+  },
 
-    local servers = require("alan.config.lsp")
-
-    require("mason").setup()
-    require("mason-tool-installer").setup({ ensure_installed = vim.tbl_keys(servers) })
-    require("mason-lspconfig").setup({
-      handlers = {
-        function(server_name)
-          local server = servers[server_name] or {}
-
-          server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-          require("lspconfig")[server_name].setup(server)
-        end,
+  {
+    "williamboman/mason.nvim",
+    cmd = "Mason",
+    build = ":MasonUpdate",
+    dependencies = { "WhoIsSethDaniel/mason-tool-installer.nvim" },
+    opts_extend = { "ensure_installed" },
+    opts = {
+      ensure_installed = {
+        "stylua",
+        "shfmt",
       },
-    })
-  end,
+    },
+    config = function(_, opts)
+      require("mason").setup(opts)
+      require("mason-tool-installer").setup({ ensure_installed = opts.ensure_installed })
+    end,
+  },
 }

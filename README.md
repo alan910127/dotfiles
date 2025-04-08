@@ -1,41 +1,53 @@
 # Dotfiles
 
 Welcome to my dotfiles repository!
-This collection contains my personalized configuration files tailored for various development environments.
+This collection contains my personalized configuration files for various development environments—crafted for speed, clarity, and comfort.
 
-## Installation
+## 🚀 Installation
 
-To begin using these dotfiles, clone this repository to your preferred location:
+You can set up everything with a single command:
 
-```bash
-git clone https://github.com/alan910127/dotfiles.git ~/.dotfiles
+```sh
+curl -fsSL https://raw.githubusercontent.com/alan910127/dotfiles/refs/heads/main/bootstrap | bash
 ```
 
-After cloning, navigate into the dotfiles directory:
+Alternatively, if curl isn't available:
 
-```bash
-cd ~/.dotfiles
+```sh
+wget -qO- https://raw.githubusercontent.com/alan910127/dotfiles/refs/heads/main/bootstrap | bash
 ```
 
-Since these configurations are organized to reflect their placement in the home directory, you can now utilize [GNU Stow](https://www.gnu.org/software/stow/) to seamlessly symlink them:
+> [!IMPORTANT]
+> This script will symlink configuration files and install essential tools.
+> Make sure to review the script before running it if you're cautious (which you should be!).
 
-For instance, to symlink the configuration for Neovim:
+## 📁 What's Included?
 
-```bash
-stow -t ~ nvim
+- Zsh configuration (.zshrc, plugins, themes)
+- Neovim setup
+- Git configuration
+- Tmux layout
+- Other CLI tools and aliases
+
+## 🧪 Dry Run Preview
+
+Curious what the script will do? You can run it with `--dry` to preview the steps without making any changes:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/alan910127/dotfiles/refs/heads/main/bootstrap | bash -s - --dry
 ```
 
-Once the applications are stowed, feel free to start using them immediately.
-However, if the configurations are not applied as expected, reopen your shell to ensure the changes take effect.
+Example output:
 
-## Notes
+```
+2025-04-09 06:45:40 [info ] [DRY RUN] OS detected: Arch Linux
+2025-04-09 06:45:40 [info ] [DRY RUN] Installing packages (bat eza fd fzf git git git-delta neovim ripgrep stow tmux zoxide zsh)
+2025-04-09 06:45:40 [info ] [DRY RUN] Cloning repository to '/home/alan/.dotfiles'
+2025-04-09 06:45:40 [info ] [DRY RUN] Stowing '/home/alan/.dotfiles/home' to '/home/alan'
+2025-04-09 06:45:40 [info ] [DRY RUN] Setting up tmux plugin manager
+```
 
-For an enhanced experience with these configurations, ensure you have the following tools installed:
+## ⚠️ Caveat
 
-- [junegunn/fzf](https://github.com/junegunn/fzf)
-- [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep)
-- [ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide)
-- [sharkdp/fd](https://github.com/sharkdp/fd)
-- [eza-community/eza](https://github.com/eza-community/eza)
-
-These dependencies complement the functionality of the configured tools and contribute to a smoother workflow.
+This setup is primarily developed and tested on **Arch Linux**.  
+Basic support for **Ubuntu** is included, but it may be incomplete (e.g., missing package names or dependencies).

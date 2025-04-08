@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+pkgs=(
+    bat
+    eza
+    fd
+    fzf
+    git
+    git
+    git-delta
+    neovim
+    ripgrep
+    stow
+    tmux
+    zoxide
+    zsh
+)
+
+BLACK='\033[0;30m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+DOTFILES="$HOME/.dotfiles"
+
+info() {
+    if [ "$dry_run" = "1" ]; then
+        echo -e "${BLACK}$(date +'%F %T')${NC} [${GREEN}info${NC} ] [DRY RUN] $1"
+    else
+        echo -e "${BLACK}$(date +'%F %T')${NC} [${GREEN}info${NC} ] $1"
+    fi
+}
+
+error() {
+    if [ "$dry_run" = "1" ]; then
+        echo -e "${BLACK}$(date +'%F %T')${NC} [${RED}error${NC}] [DRY RUN] $1"
+    else
+        echo -e "${BLACK}$(date +'%F %T')${NC} [${RED}error${NC}] $1"
+    fi
+}
+
+check_os() {
+    case "$(echo $ID | awk '{ print tolower($0) }')" in
+        "arch") info "OS detected: Arch Linux" ;;
+        "ubuntu") info "OS detected: Ubuntu" ;;
+        *)
+            error "Unsupported OS '$ID'"
+            exit 1
+    esac
+}
+
+install() {
+    info "Installing packages ($(echo $@))"
+    if [ "$dry_run" = "1" ]; then
+        return
+    fi
+
+    case "$(echo $ID | awk '{ print tolower($0) }')" in
+        "arch") sudo pacman -S "$@" ;;
+        "ubuntu") sudo apt install "$@" ;;
+    esac
+}
+
+if [ "$1" = "--dry" ]; then
+    dry_run="1"
+fi
+
+main() {
+    source /etc/os-release
+
+    check_os
+
+    install "${pkgs[@]}"
+
+    info "Cloning repository to '$DOTFILES'"
+    if ! [ "$dry_run" = "1" ]; then
+        git clone https://github.com/alan910127/dotfiles.git "$DOTFILES"
+    fi
+
+    info "Stowing '$DOTFILES/home' to '$HOME'"
+    if ! [ "$dry_run" = "1" ]; then
+        pushd "$DOTFILES" > /dev/null
+        stow -v -t "$HOME" home/
+        popd > /dev/null
+    fi
+
+    info "Setting up tmux plugin manager"
+    if ! [ "$dry_run" = "1" ]; then
+        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    fi
+}
+
+main
+
+# vim: ft=sh

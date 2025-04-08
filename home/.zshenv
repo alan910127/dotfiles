@@ -39,3 +39,4 @@ add_to_path_front $HOME/.zig
 add_to_path_front $HOME/go/bin
 
 export ANDROID_HOME=$HOME/Android/Sdk/
+. "$HOME/.cargo/env"

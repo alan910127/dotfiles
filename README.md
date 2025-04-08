@@ -7,12 +7,9 @@ This collection contains my personalized configuration files for various develop
 
 You can set up everything with a single command:
 
-````sh
-curl -fsSL https://raw.githubusercontent.com/alan910127/dotfiles/refs/heads/main/bootstrap | bash
-
 ```sh
 curl -fsSL https://raw.githubusercontent.com/alan910127/dotfiles/refs/heads/main/bootstrap | bash
-````
+```
 
 Alternatively, if curl isn't available:
 
@@ -37,28 +34,17 @@ wget -qO- https://raw.githubusercontent.com/alan910127/dotfiles/refs/heads/main/
 Curious what the script will do? You can run it with `--dry` to preview the steps without making any changes:
 
 ```sh
-bash bootstrap --dry
+curl -fsSL https://raw.githubusercontent.com/alan910127/dotfiles/refs/heads/main/bootstrap | bash -s - --dry
 ```
 
 Example output:
 
 ```
-2025-04-09 06:25:16 [info ] [DRY RUN] OS detected: Arch Linux
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'bat'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'delta'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'eza'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'fd'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'fzf'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'git'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'neovim'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'ripgrep'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'stow'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'tmux'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'zoxide'
-2025-04-09 06:25:16 [info ] [DRY RUN] Installing 'zsh'
-2025-04-09 06:25:16 [info ] [DRY RUN] Cloning repository to '/home/alan/.dotfiles'
-2025-04-09 06:25:16 [info ] [DRY RUN] Stowing '/home/alan/.dotfiles/home' to '/home/alan'
-2025-04-09 06:25:16 [info ] [DRY RUN] Setting up tmux plugin manager
+2025-04-09 06:45:40 [info ] [DRY RUN] OS detected: Arch Linux
+2025-04-09 06:45:40 [info ] [DRY RUN] Installing packages (bat eza fd fzf git git git-delta neovim ripgrep stow tmux zoxide zsh)
+2025-04-09 06:45:40 [info ] [DRY RUN] Cloning repository to '/home/alan/.dotfiles'
+2025-04-09 06:45:40 [info ] [DRY RUN] Stowing '/home/alan/.dotfiles/home' to '/home/alan'
+2025-04-09 06:45:40 [info ] [DRY RUN] Setting up tmux plugin manager
 ```
 
 ## ⚠️ Caveat

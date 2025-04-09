@@ -1,5 +1,6 @@
 [default_session]
 startup_command = "tmux new-window && tmux select-window -t 1 && nvim ."
+preview_command = "eza --all --oneline --group-directories-first --icons --color=always {}"
 
 [[session]]
 name = "neovim config  "

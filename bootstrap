@@ -80,7 +80,8 @@ main() {
     info "Stowing '$DOTFILES/home' to '$HOME'"
     if ! [ "$dry_run" = "1" ]; then
         pushd "$DOTFILES" > /dev/null
-        stow -v -t "$HOME" home/
+        stow -v -t "$HOME" --adopt home/
+        git reset --hard
         popd > /dev/null
     fi
 

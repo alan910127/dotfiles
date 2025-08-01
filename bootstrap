@@ -85,6 +85,15 @@ main() {
         popd > /dev/null
     fi
 
+    info "Setting up themes for 'bat'"
+    if ! [ "$dry_run" = "1" ]; then
+        local themes_dir="$(bat --config-dir)/themes"
+        mkdir -p "$themes_dir"
+        echo "*" > "${themes_dir}/.gitignore"
+        wget -P "$themes_dir" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
+        bat cache --build
+    fi
+
     info "Setting up tmux plugin manager"
     if ! [ "$dry_run" = "1" ]; then
         git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
